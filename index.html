@@ -115,7 +115,7 @@
                         System: <span class="font-medium text-red-600 ml-1">Keine Aktivität</span>
                     </span>
                 </div>
-                <div class="text-gray-500">Version 1.0.0 • Zertifiziert</div>
+                <div class="text-gray-500">Version 1.0.0</div>
             </div>
         </div>
     </div>
@@ -127,16 +127,9 @@
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-4">
                     <div>
                         <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                            Nachschlagewerk: Wer hat gefragt?
+                            Wer hat gefragt?
                         </h1>
-                        <p class="text-base md:text-lg text-gray-600">Offizielle Datenbank zur Verifizierung von
-                            Nachfragen und Interessensbekundungen</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium whitespace-nowrap">
-                            ✓ ZERTIFIZIERT
-                        </div>
+                        <p class="text-base md:text-lg text-gray-600">Datenbank zur Nachfragenverifizierung</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm pt-4 border-t border-gray-100">
@@ -155,26 +148,26 @@
 
         <!-- Tab Navigation -->
         <nav class="mb-6">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="flex overflow-x-auto">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-1">
+                <div class="grid grid-cols-3 md:grid-cols-5 gap-1">
                     <button onclick="showTab('database')" id="tab-database"
-                        class="tab-btn active flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        class="tab-btn px-3 py-2.5 text-xs md:text-sm font-medium text-gray-600 hover:bg-gray-50 rounded">
                         Datenbank
                     </button>
                     <button onclick="showTab('transport')" id="tab-transport"
-                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        class="tab-btn active px-3 py-2.5 text-xs md:text-sm font-medium text-gray-600 hover:bg-gray-50 rounded">
                         Transport
                     </button>
                     <button onclick="showTab('registry')" id="tab-registry"
-                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        class="tab-btn px-3 py-2.5 text-xs md:text-sm font-medium text-gray-600 hover:bg-gray-50 rounded">
                         Register
                     </button>
                     <button onclick="showTab('analytics')" id="tab-analytics"
-                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        class="tab-btn px-3 py-2.5 text-xs md:text-sm font-medium text-gray-600 hover:bg-gray-50 rounded">
                         Analysen
                     </button>
                     <button onclick="showTab('location')" id="tab-location"
-                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        class="tab-btn px-3 py-2.5 text-xs md:text-sm font-medium text-gray-600 hover:bg-gray-50 rounded">
                         Standort
                     </button>
                 </div>
@@ -185,10 +178,10 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[500px]">
 
             <!-- Database Tab -->
-            <div id="content-database" class="tab-content p-6 md:p-8">
+            <div id="content-database" class="tab-content hidden p-6 md:p-8">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Datenbank-Abfrage</h2>
-                    <p class="text-gray-600">Durchsuchen Sie die vollständige Datenbank aller erfassten Nachfragen</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Datenbank</h2>
+                    <p class="text-gray-600">Suche nach erfassten Nachfragen</p>
                 </div>
 
                 <div class="mb-6">
@@ -238,10 +231,10 @@
             </div>
 
             <!-- Transport Tab -->
-            <div id="content-transport" class="tab-content hidden p-6 md:p-8">
+            <div id="content-transport" class="tab-content p-6 md:p-8">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Transportübersicht</h2>
-                    <p class="text-gray-600">Fahrplan und Kapazität aller Transportmittel für interessierte Personen</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Transport</h2>
+                    <p class="text-gray-600">Fahrplan für interessierte Personen</p>
                 </div>
 
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
@@ -264,39 +257,31 @@
                         <thead>
                             <tr>
                                 <th>Linie</th>
-                                <th>Route</th>
-                                <th>Abfahrt</th>
                                 <th>Passagiere</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="font-mono font-semibold">404</td>
-                                <td>Nirgendwo → Nirgendwo</td>
-                                <td>--:--</td>
-                                <td class="font-mono">0/0</td>
+                                <td class="font-semibold">Bus mit den Leuten, die es interessiert</td>
+                                <td class="font-mono">0/50</td>
                                 <td><span
                                         class="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">AUSGEFALLEN</span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-mono font-semibold">000</td>
-                                <td>Leere → Void</td>
-                                <td>--:--</td>
-                                <td class="font-mono">0/0</td>
+                                <td class="font-semibold">Expressbus der Interessenten</td>
+                                <td class="font-mono">0/80</td>
                                 <td><span
                                         class="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">AUSGEFALLEN</span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-mono font-semibold">∅</td>
-                                <td>Nicht existent</td>
-                                <td>Nie</td>
-                                <td class="font-mono">-/-</td>
+                                <td class="font-semibold">Nightliner für Nachfrager</td>
+                                <td class="font-mono">0/30</td>
                                 <td><span
-                                        class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">EXISTIERT
-                                        NICHT</span></td>
+                                        class="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">AUSGEFALLEN</span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -311,8 +296,8 @@
             <!-- Registry Tab -->
             <div id="content-registry" class="tab-content hidden p-6 md:p-8">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Personenregister</h2>
-                    <p class="text-gray-600">Vollständiges Verzeichnis aller Personen mit nachgewiesener Nachfrage</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Register</h2>
+                    <p class="text-gray-600">Verzeichnis von Personen mit nachgewiesener Nachfrage</p>
                 </div>
 
                 <div class="mb-6">
@@ -348,11 +333,11 @@
             <!-- Analytics Tab -->
             <div id="content-analytics" class="tab-content hidden p-6 md:p-8">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Datenanalyse & Statistiken</h2>
-                    <p class="text-gray-600">Umfassende statistische Auswertung aller erfassten Daten</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Statistiken</h2>
+                    <p class="text-gray-600">Statistische Auswertung</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                     <div class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
                         <p class="text-sm text-gray-600 mb-2">Nachfragen gesamt</p>
                         <p class="text-4xl font-bold text-gray-900">0</p>
@@ -367,11 +352,6 @@
                         <p class="text-sm text-gray-600 mb-2">Tage seit letzter Nachfrage</p>
                         <p class="text-4xl font-bold text-gray-900">∞</p>
                         <p class="text-xs text-gray-500 mt-2">Nie dokumentiert</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
-                        <p class="text-sm text-gray-600 mb-2">Fehlercode</p>
-                        <p class="text-4xl font-bold text-gray-900">404</p>
-                        <p class="text-xs text-gray-500 mt-2">Interesse nicht gefunden</p>
                     </div>
                 </div>
 
@@ -438,8 +418,8 @@
             <!-- Location Tab -->
             <div id="content-location" class="tab-content hidden p-6 md:p-8">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Standortermittlung</h2>
-                    <p class="text-gray-600">Geografische Ortung von Personen mit nachgewiesener Nachfrage</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Standort</h2>
+                    <p class="text-gray-600">Ortung von Personen mit nachgewiesener Nachfrage</p>
                 </div>
 
                 <div class="mb-6">
@@ -506,7 +486,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
                 <div>
                     <p>© 2026 werhatgefragt.de</p>
-                    <p class="text-xs text-gray-500">Alle Rechte vorbehalten • Offiziell zertifiziert</p>
+                    <p class="text-xs text-gray-500">Alle Rechte vorbehalten</p>
                 </div>
                 <div class="flex gap-6 text-xs">
                     <a href="#" class="hover:text-gray-900">Datenschutz</a>
