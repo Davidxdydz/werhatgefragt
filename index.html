@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wer hat gefragt? - Offizielles Nachschlagewerk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        @keyframes pulse-subtle {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .pulse-subtle {
+            animation: pulse-subtle 2s ease-in-out infinite;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-offline {
+            background-color: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        }
+
+        .tab-btn {
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #2563eb;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            background-color: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .loading-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #3b82f6 100%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen text-gray-900">
+    <!-- Top Bar -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 py-3 max-w-7xl">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-2 text-sm">
+                <div class="flex items-center space-x-6">
+                    <span class="text-gray-600">Letzte Aktualisierung: <span class="font-medium text-gray-900"
+                            id="updateTime"></span></span>
+                    <span class="flex items-center text-gray-600">
+                        <span class="status-indicator status-offline pulse-subtle"></span>
+                        System: <span class="font-medium text-red-600 ml-1">Keine Aktivität</span>
+                    </span>
+                </div>
+                <div class="text-gray-500">Version 1.0.0 • Zertifiziert</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6 md:py-10 max-w-7xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-4">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            Nachschlagewerk: Wer hat gefragt?
+                        </h1>
+                        <p class="text-base md:text-lg text-gray-600">Offizielle Datenbank zur Verifizierung von
+                            Nachfragen und Interessensbekundungen</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium whitespace-nowrap">
+                            ✓ ZERTIFIZIERT
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm pt-4 border-t border-gray-100">
+                    <div class="text-gray-600">
+                        <span class="font-semibold text-gray-900">0</span> Einträge gesamt
+                    </div>
+                    <div class="text-gray-600">
+                        Zeitraum: <span class="font-semibold text-gray-900">Seit Anbeginn</span>
+                    </div>
+                    <div class="text-gray-600">
+                        Genauigkeit: <span class="font-semibold text-gray-900">100%</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="flex overflow-x-auto">
+                    <button onclick="showTab('database')" id="tab-database"
+                        class="tab-btn active flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        Datenbank
+                    </button>
+                    <button onclick="showTab('transport')" id="tab-transport"
+                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        Transport
+                    </button>
+                    <button onclick="showTab('registry')" id="tab-registry"
+                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        Register
+                    </button>
+                    <button onclick="showTab('analytics')" id="tab-analytics"
+                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        Analysen
+                    </button>
+                    <button onclick="showTab('location')" id="tab-location"
+                        class="tab-btn flex-1 min-w-[120px] px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                        Standort
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Areas -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[500px]">
+
+            <!-- Database Tab -->
+            <div id="content-database" class="tab-content p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Datenbank-Abfrage</h2>
+                    <p class="text-gray-600">Durchsuchen Sie die vollständige Datenbank aller erfassten Nachfragen</p>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex gap-2">
+                        <input type="text" id="searchInput" placeholder="Suchbegriff eingeben..."
+                            class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <button onclick="performSearch()"
+                            class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                            Suchen
+                        </button>
+                    </div>
+                </div>
+
+                <div id="searchResults">
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Datum</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center py-12 text-gray-500">
+                                        <div class="flex flex-col items-center">
+                                            <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                                                </path>
+                                            </svg>
+                                            <p class="font-semibold text-gray-900 mb-1">Keine Datensätze gefunden</p>
+                                            <p class="text-sm">Die Datenbank enthält keine Einträge</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-500">
+                        Zeigt 0 von 0 Ergebnissen
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transport Tab -->
+            <div id="content-transport" class="tab-content hidden p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Transportübersicht</h2>
+                    <p class="text-gray-600">Fahrplan und Kapazität aller Transportmittel für interessierte Personen</p>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor"
+                            viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <p class="font-semibold text-amber-900">Betriebsstörung</p>
+                            <p class="text-sm text-amber-800">Aktuell sind keine Verbindungen verfügbar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Linie</th>
+                                <th>Route</th>
+                                <th>Abfahrt</th>
+                                <th>Passagiere</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-mono font-semibold">404</td>
+                                <td>Nirgendwo → Nirgendwo</td>
+                                <td>--:--</td>
+                                <td class="font-mono">0/0</td>
+                                <td><span
+                                        class="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">AUSGEFALLEN</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono font-semibold">000</td>
+                                <td>Leere → Void</td>
+                                <td>--:--</td>
+                                <td class="font-mono">0/0</td>
+                                <td><span
+                                        class="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">AUSGEFALLEN</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono font-semibold">∅</td>
+                                <td>Nicht existent</td>
+                                <td>Nie</td>
+                                <td class="font-mono">-/-</td>
+                                <td><span
+                                        class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">EXISTIERT
+                                        NICHT</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600"><strong>Hinweis:</strong> Der Betrieb wurde mangels Nachfrage
+                        eingestellt. Letzte dokumentierte Fahrt: Nie</p>
+                </div>
+            </div>
+
+            <!-- Registry Tab -->
+            <div id="content-registry" class="tab-content hidden p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Personenregister</h2>
+                    <p class="text-gray-600">Vollständiges Verzeichnis aller Personen mit nachgewiesener Nachfrage</p>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex gap-2">
+                        <input type="text" id="nameInput" placeholder="Namen zur Registrierung eingeben..."
+                            class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <button onclick="addToRegistry()"
+                            class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+                            Registrieren
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Die Registrierung erfordert einen nachgewiesenen Nachweis der
+                        Nachfrage</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-8 md:p-12">
+                    <div class="text-center">
+                        <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Register ist leer</h3>
+                        <p class="text-gray-600 mb-4">Es wurden keine Personen erfasst</p>
+                        <div class="inline-block px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-700">
+                            <strong>Registrierte Personen:</strong> 0
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="content-analytics" class="tab-content hidden p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Datenanalyse & Statistiken</h2>
+                    <p class="text-gray-600">Umfassende statistische Auswertung aller erfassten Daten</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
+                        <p class="text-sm text-gray-600 mb-2">Nachfragen gesamt</p>
+                        <p class="text-4xl font-bold text-gray-900">0</p>
+                        <p class="text-xs text-gray-500 mt-2">Alle Zeiträume</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
+                        <p class="text-sm text-gray-600 mb-2">Interesse-Niveau</p>
+                        <p class="text-4xl font-bold text-gray-900">0<span class="text-2xl">%</span></p>
+                        <p class="text-xs text-red-600 mt-2">↓ Historisches Tief</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
+                        <p class="text-sm text-gray-600 mb-2">Tage seit letzter Nachfrage</p>
+                        <p class="text-4xl font-bold text-gray-900">∞</p>
+                        <p class="text-xs text-gray-500 mt-2">Nie dokumentiert</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
+                        <p class="text-sm text-gray-600 mb-2">Fehlercode</p>
+                        <p class="text-4xl font-bold text-gray-900">404</p>
+                        <p class="text-xs text-gray-500 mt-2">Interesse nicht gefunden</p>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Jahresübersicht</h3>
+                    <div class="mb-2 flex justify-between text-sm text-gray-600">
+                        <span>Anzahl Nachfragen pro Monat</span>
+                        <span>Max: 0</span>
+                    </div>
+                    <div class="h-48 flex items-end justify-between gap-1 bg-gray-50 rounded p-4">
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Jan</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Feb</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Mär</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Apr</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Mai</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Jun</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Jul</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Aug</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Sep</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Okt</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Nov</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-blue-200 rounded-t" style="height: 2px;"></div>
+                            <span class="text-xs text-gray-600 mt-2">Dez</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4 text-center">Alle Werte auf konstantem Nullniveau</p>
+                </div>
+            </div>
+
+            <!-- Location Tab -->
+            <div id="content-location" class="tab-content hidden p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Standortermittlung</h2>
+                    <p class="text-gray-600">Geografische Ortung von Personen mit nachgewiesener Nachfrage</p>
+                </div>
+
+                <div class="mb-6">
+                    <button onclick="searchLocation()"
+                        class="w-full md:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                        🔍 Standortsuche starten
+                    </button>
+                </div>
+
+                <div id="locationLoading" class="hidden mb-4">
+                    <div class="loading-bar rounded"></div>
+                    <p class="text-sm text-gray-600 mt-2">Durchsuche Datenbank...</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg overflow-hidden mb-4">
+                    <div class="h-64 md:h-96 bg-gray-100 relative flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-10"
+                            style="background-image: repeating-linear-gradient(0deg, #d1d5db 0px, #d1d5db 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, #d1d5db 0px, #d1d5db 1px, transparent 1px, transparent 20px);">
+                        </div>
+                        <div class="relative text-center">
+                            <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <p class="text-lg font-semibold text-gray-700">Kein Standort gefunden</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <table class="w-full text-sm">
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2 text-gray-600 font-medium">GPS-Koordinaten:</td>
+                            <td class="py-2 text-gray-900 font-mono">0.000000°N, 0.000000°E</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2 text-gray-600 font-medium">Standortgenauigkeit:</td>
+                            <td class="py-2 text-gray-900">± ∞ km</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2 text-gray-600 font-medium">Region:</td>
+                            <td class="py-2 text-gray-900">Nicht ermittelbar</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 text-gray-600 font-medium">Status:</td>
+                            <td class="py-2"><span
+                                    class="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">KEINE PERSON
+                                    GEFUNDEN</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="locationMessage" class="mt-4 text-center text-gray-600"></div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 pt-6 border-t border-gray-200">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+                <div>
+                    <p>© 2026 werhatgefragt.de</p>
+                    <p class="text-xs text-gray-500">Alle Rechte vorbehalten • Offiziell zertifiziert</p>
+                </div>
+                <div class="flex gap-6 text-xs">
+                    <a href="#" class="hover:text-gray-900">Datenschutz</a>
+                    <a href="#" class="hover:text-gray-900">Impressum</a>
+                    <a href="#" class="hover:text-gray-900">Kontakt</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('updateTime').textContent = timeString;
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Reset all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected content
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+
+            // Highlight active tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // Search functionality
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const resultsDiv = document.getElementById('searchResults');
+
+            resultsDiv.innerHTML = `
+                <div class="mb-4">
+                    <div class="loading-bar rounded"></div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                resultsDiv.innerHTML = `
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Datum</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center py-12 text-gray-500">
+                                        <div class="flex flex-col items-center">
+                                            <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            <p class="font-semibold text-gray-900 mb-1">Suche abgeschlossen</p>
+                                            <p class="text-sm">0 Ergebnisse für "${searchInput.value || 'Ihre Suche'}"</p>
+                                            <p class="text-xs text-gray-400 mt-2">Die Datenbank enthält keine passenden Einträge</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-500">
+                        Zeigt 0 von 0 Ergebnissen
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        // Registry functionality
+        function addToRegistry() {
+            const input = document.getElementById('nameInput');
+            const name = input.value.trim();
+
+            if (name) {
+                const originalPlaceholder = input.placeholder;
+                input.value = '';
+                input.placeholder = '❌ Registrierung fehlgeschlagen: Nachweis nicht erbracht';
+                input.classList.add('border-red-300', 'text-red-600');
+
+                setTimeout(() => {
+                    input.placeholder = originalPlaceholder;
+                    input.classList.remove('border-red-300', 'text-red-600');
+                }, 3000);
+            }
+        }
+
+        // Location search functionality
+        let searchAttempts = 0;
+        function searchLocation() {
+            searchAttempts++;
+            const loadingDiv = document.getElementById('locationLoading');
+            const messageDiv = document.getElementById('locationMessage');
+
+            const messages = [
+                'Standortermittlung fehlgeschlagen: Keine Person vorhanden',
+                'Satelliten-Scan abgeschlossen: 0 Personen detektiert',
+                'GPS-Signal verloren: Zielobjekt nicht existent',
+                'Koordinaten nicht ermittelbar: Person nicht in Datenbank',
+                'Suche erfolglos: Niemand an angegebener Position'
+            ];
+
+            loadingDiv.classList.remove('hidden');
+            messageDiv.textContent = '';
+
+            setTimeout(() => {
+                loadingDiv.classList.add('hidden');
+                const messageIndex = (searchAttempts - 1) % messages.length;
+                messageDiv.innerHTML = `<span class="text-red-600 font-medium">⚠ ${messages[messageIndex]}</span>`;
+            }, 1500);
+        }
+
+        // Enter key support
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('searchInput')?.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') performSearch();
+            });
+
+            document.getElementById('nameInput')?.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') addToRegistry();
+            });
+        });
+    </script>
+</body>
+
+</html>
